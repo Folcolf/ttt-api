@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = []
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name String @unique
+  role Role
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  credential Credential?
+  games      Game[]
+}
+
+model Credential {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique
+  email  String @unique
+  hash   String
+  error  Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Game {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  opponentId String?  @db.ObjectId
+  win        Boolean?
+
+  createdAt  DateTime @default(now())
+  finishedAt DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+}
