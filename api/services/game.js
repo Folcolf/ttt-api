@@ -7,12 +7,15 @@ import prisma from '../db.js'
  * @param {Object} pagination
  * @returns {Promise<client.Game[]>}
  */
-const find = async ({ page, limit }) => {
+const find = async ({ page, limit, id }) => {
   const skip = (page - 1) * limit
 
   const games = await prisma.game.findMany({
     skip,
     take: limit,
+    where: {
+      userId: id,
+    },
   })
 
   return games
@@ -30,6 +33,28 @@ const getById = async (id) => {
       id,
     },
   })
+
+  return game
+}
+
+/**
+ * Count the number of games for a user or all users
+ *
+ * @param {*} id
+ * @return {*}
+ */
+const count = async (id) => {
+  let search = {}
+
+  if (id !== undefined) {
+    search = {
+      where: {
+        userId: id,
+      },
+    }
+  }
+
+  const game = await prisma.game.count(search)
 
   return game
 }
@@ -100,6 +125,7 @@ const remove = async (id) => {
 export default {
   find,
   getById,
+  count,
   create,
   update,
   remove,

@@ -31,6 +31,17 @@ export default {
    * @param {express.Request} req
    * @param {express.Response} res
    */
+  count: async (req, res) => {
+    service
+      .count(req.query.id)
+      .then((data) => handleResponse(res, data))
+      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+  },
+
+  /**
+   * @param {express.Request} req
+   * @param {express.Response} res
+   */
   create: async (req, res) => {
     service
       .create(req.body)

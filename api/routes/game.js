@@ -13,6 +13,11 @@ const gameRoutes = [
     handlers: [isConnected, game.getById],
   },
   {
+    path: '/game/count',
+    method: 'get',
+    handlers: [isConnected, game.count],
+  },
+  {
     path: '/game',
     method: 'post',
     handlers: [isConnected, game.create],

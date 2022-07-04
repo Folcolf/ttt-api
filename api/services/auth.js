@@ -34,6 +34,15 @@ export default {
       throw new Error('Invalid password')
     }
 
+    await prisma.credential.update({
+      where: {
+        id: credential.id,
+      },
+      data: {
+        error: 0,
+      },
+    })
+
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         id: credential.userId,
@@ -66,7 +75,7 @@ export default {
       },
     })
 
-    if (alreadyExists) {
+    if (alreadyExists !== null) {
       throw new Error('User already exists')
     }
 
@@ -84,6 +93,7 @@ export default {
             hash: hashedPassword,
           },
         },
+        role: client.Role.USER,
       },
     })
     return user

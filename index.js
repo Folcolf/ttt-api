@@ -1,7 +1,6 @@
 import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
-import http from 'http'
 import morgan from 'morgan'
 
 import log from './api/log.js'
@@ -49,13 +48,8 @@ app.use(
 app.use('/api', router)
 
 //
-// Create an HTTP server.
-//
-const server = http.createServer(app)
-
-//
 // Start the server.
 //
-server.listen(8080, () => {
+app.listen(8080, () => {
   log.info('Listening on http://localhost:8080')
 })
