@@ -1,34 +1,41 @@
 import game from '../controllers/game.js'
 import { isAdmin, isConnected, isOwner } from '../utils.js'
 
+const URL = '/games'
+
 const gameRoutes = [
   {
-    path: '/game',
+    path: `${URL}/count/:id`,
     method: 'get',
-    handlers: [isConnected, isAdmin, game.find],
+    handlers: [isConnected, game.countById],
   },
   {
-    path: '/game/:id',
+    path: `${URL}/count`,
+    method: 'get',
+    handlers: [game.count],
+  },
+  {
+    path: `${URL}/:id`,
     method: 'get',
     handlers: [isConnected, game.getById],
   },
   {
-    path: '/game/count',
+    path: URL,
     method: 'get',
-    handlers: [isConnected, game.count],
+    handlers: [isConnected, isAdmin, game.find],
   },
   {
-    path: '/game',
+    path: URL,
     method: 'post',
     handlers: [isConnected, game.create],
   },
   {
-    path: '/game/:id',
+    path: `${URL}/:id`,
     method: 'put',
     handlers: [isConnected, isOwner, game.update],
   },
   {
-    path: '/game/:id',
+    path: `${URL}/:id`,
     method: 'delete',
     handlers: [isConnected, isOwner, game.remove],
   },

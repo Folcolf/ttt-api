@@ -1,4 +1,5 @@
 import express from 'express'
+import httpStatus from 'http-status'
 import service from '../services/game.js'
 import { handleResponse } from '../utils.js'
 
@@ -33,7 +34,18 @@ export default {
    */
   count: async (req, res) => {
     service
-      .count(req.query.id)
+      .count()
+      .then((data) => handleResponse(res, data))
+      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+  },
+
+  /**
+   * @param {express.Request} req
+   * @param {express.Response} res
+   */
+  countById: async (req, res) => {
+    service
+      .count(req.params.id)
       .then((data) => handleResponse(res, data))
       .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
