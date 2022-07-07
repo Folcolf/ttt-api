@@ -1,23 +1,25 @@
 import auth from '../controllers/auth.js'
 
+const URL = '/auth'
+
 const authRoutes = [
   {
-    path: '/auth/login',
+    path: `${URL}/login`,
     method: 'post',
     handlers: [auth.login],
   },
   {
-    path: '/auth/register',
+    path: `${URL}/register`,
     method: 'post',
     handlers: [auth.register],
   },
   {
-    path: '/auth/logout',
+    path: `${URL}/logout`,
     method: 'post',
     handlers: [auth.logout],
   },
   {
-    path: '/auth/logged',
+    path: `${URL}/logged`,
     method: 'get',
     handlers: [auth.isLogged],
   },

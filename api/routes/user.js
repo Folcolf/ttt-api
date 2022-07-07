@@ -1,29 +1,31 @@
 import user from '../controllers/user.js'
 import { isAdmin, isConnected, isOwner } from '../utils.js'
 
+const URL = '/users'
+
 const userRoutes = [
   {
-    path: '/user',
+    path: URL,
     method: 'get',
     handlers: [isConnected, isAdmin, user.find],
   },
   {
-    path: '/user/:id',
+    path: `${URL}/:id`,
     method: 'get',
     handlers: [isConnected, user.getById],
   },
   {
-    path: '/user/:id',
+    path: `${URL}/:id`,
     method: 'put',
     handlers: [isConnected, isOwner, user.update],
   },
   {
-    path: '/user/:id/password',
+    path: `${URL}/:id/password`,
     method: 'put',
     handlers: [isConnected, isOwner, user.updatePassword],
   },
   {
-    path: '/user/:id',
+    path: `${URL}/:id`,
     method: 'delete',
     handlers: [isConnected, isOwner, user.remove],
   },
