@@ -19,6 +19,7 @@ const myFormat = (uppercase) =>
   })
 
 const level = args[0] || 'info'
+const date = new Date()
 
 const log = createLogger({
   level,
@@ -28,7 +29,7 @@ const log = createLogger({
       level,
       format: combine(colorize(), splat(), timestamp(), myFormat(false)),
     }),
-    new transports.File({ filename: 'logs/server.log' }),
+    new transports.File({ filename: `logs/server.${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}.log` }),
   ],
 })
 
