@@ -1,13 +1,15 @@
 import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
+import fs from 'fs'
 import morgan from 'morgan'
+import path from 'path'
 
 import log from './api/log.js'
 import { router } from './api/routes/index.js'
 
 const app = express()
-app.listen
+
 //
 // We need the same instance of the session parser in express and
 // WebSocket server.
@@ -39,9 +41,22 @@ morgan.token('data', (request) => {
   else return ' '
 })
 
+// create a write stream (in append mode)
+const date = new Date()
+const accessLogStream = fs.createWriteStream(
+  path.join(
+    './logs',
+    `access.${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.log`
+  ),
+  { flags: 'a' }
+)
+
 app.use(
   morgan(
-    ':date[iso] :method :url :status :res[content-length] - :response-time ms :data'
+    ':date[iso] :method :url :status :res[content-length] - :response-time ms :data',
+    {
+      stream: accessLogStream,
+    }
   )
 )
 
