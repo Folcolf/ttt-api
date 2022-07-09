@@ -1,6 +1,8 @@
 import { Router } from 'express'
+
 import log from '../log.js'
 import { authRoutes } from './auth.js'
+import { eventRoutes } from './events.js'
 import { gameRoutes } from './game.js'
 import { userRoutes } from './user.js'
 
@@ -16,5 +18,6 @@ const registerRoutes = (routes) => {
 registerRoutes(authRoutes)
 registerRoutes(userRoutes)
 registerRoutes(gameRoutes)
+registerRoutes(eventRoutes)
 
 export { router }

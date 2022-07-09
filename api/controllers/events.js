@@ -1,4 +1,5 @@
 import express from 'express'
+
 import { SSEClient } from '../services/events.js'
 
 export default {
@@ -13,4 +14,3 @@ export default {
     client.send({ id: Date.now(), type: 'message', data: 'hello' })
   },
 }
-type
