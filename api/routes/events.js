@@ -8,6 +8,11 @@ const eventRoutes = [
     method: 'get',
     handlers: [isConnected, events.hello],
   },
+  {
+    path: `${URL}/:id`,
+    method: 'put',
+    handlers: [isConnected, events.joined],
+  }
 ]
 
 export { eventRoutes }
