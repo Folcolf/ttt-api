@@ -23,13 +23,25 @@ const date = new Date()
 
 const log = createLogger({
   level,
-  format: combine(splat(), timestamp(), myFormat(true)),
   transports: [
     new transports.Console({
       level,
       format: combine(colorize(), splat(), timestamp(), myFormat(false)),
     }),
     new transports.File({
+      format: combine(
+        timestamp({
+          format: 'YYYY-MM-DD HH:mm:ss',
+        }),
+        printf(
+          (info) =>
+            JSON.stringify({
+              time: info.timestamp,
+              level: info.level,
+              message: info.message,
+            }) + ','
+        )
+      ),
       filename: `logs/server.${date.getFullYear()}-${
         date.getMonth() + 1
       }-${date.getDate()}.log`,
