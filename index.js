@@ -1,14 +1,19 @@
+import compression from 'compression'
 import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
 import fs from 'fs'
+import helmet from 'helmet'
+import http from 'http'
 import morgan from 'morgan'
 import path from 'path'
 
 import log from './api/log.js'
 import { router } from './api/routes/index.js'
+import { createWSS } from './api/ws.js'
 
 const app = express()
+const server = http.createServer(app)
 
 //
 // We need the same instance of the session parser in express and
@@ -17,9 +22,11 @@ const app = express()
 const sessionParser = session({
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET,
-  resave: false,
+  resave: true,
 })
-
+app.enable('trust proxy')
+app.use(compression())
+app.use(helmet())
 app.use(express.json())
 app.use(sessionParser)
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
@@ -53,18 +60,22 @@ const accessLogStream = fs.createWriteStream(
 
 app.use(
   morgan(
-    ':date[iso] :method :url :status :res[content-length] - :response-time ms',
+    ':date[iso] :remote-addr :method :url :status :res[content-length] - :response-time ms',
     {
       stream: accessLogStream,
     }
   )
 )
 
+// WebSocket server
+
+createWSS(server)
+
 app.use('/api', router)
 
 //
 // Start the server.
 //
-app.listen(8080, () => {
+server.listen(8080, () => {
   log.info('Listening on http://localhost:8080')
 })

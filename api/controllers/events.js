@@ -3,73 +3,117 @@ import express from 'express'
 import { SSEClient } from '../services/events.js'
 import service from '../services/game.js'
 import { getUserSession } from '../utils.js'
+import { getInstance } from '../ws.js'
+
+const clients = new Map()
+
+const wss = getInstance()
 
 export default {
   /**
    * @param {express.Request} req
    * @param {express.Response} res
    */
-  hello: (req, res) => {
-    /* On crée notre client */
-    const client = new SSEClient(res)
-
-    client.send({ id: Date.now(), type: 'open', data: 'hello' })
-  },
-
-  /**
-   * @param {express.Request} req
-   * @param {express.Response} res
-   */
   joined: (req, res) => {
-    /* On crée notre client */
     const client = new SSEClient(res)
+    const user = getUserSession(req)
+    clients.set(user.id, client)
 
     const id = req.params.id
-    const user = getUserSession(req)
-    service.update(id, {
-      opponentId: user.id,
+    service.getById(id).then((game) => {
+      if (game.userId === user.id) {
+        client.send({ id: Date.now(), type: 'open', data: 'joined' })
+      } else {
+        service.update(id, {
+          opponentId: user.id,
+        })
+
+        const clientOwner = clients.get(game.userId)
+        if (clientOwner) {
+          clientOwner.send({ id: Date.now(), type: 'close', data: 'joined' })
+          client.send({ id: Date.now(), type: 'close', data: 'joined' })
+
+          clients.delete(game.userId)
+        } else {
+          client.send({ id: Date.now(), type: 'error', data: 'close' })
+        }
+        clients.delete(user.id)
+      }
     })
 
-    client.send({ id: Date.now(), type: 'message', data: 'joined' })
+    client.on('close', () => {
+      clients.delete(user.id)
+    })
   },
 
   /**
    *
    * @param {express.Request} req
-   * @param {express.Response} res
+   * @param {express.Response} _res
    */
-  position: (req, res) => {
-    /* On crée notre client */
-    const client = new SSEClient(res)
-
-    const id = req.params.id
+  position: (req, _res) => {
     const user = getUserSession(req)
-    service
-      .getById(id)
-      .then(({ opponentId, board }) => {
-        if (opponentId !== user.id) {
-          throw new Error('not your game')
-        }
-        if (!board) {
-          board = Array(9).fill(null)
-        }
-        board[req.body.position] = user.id
-        service.update(id, {
-          board,
+    const id = req.params.id
+
+    wss.on('connection', (ws) => {
+      ws.onopen = () => {
+        service.getById(id).then((game) => {
+          if (game.userId === user.id || game.opponentId === user.id) {
+            ws.send(JSON.stringify({ id: Date.now(), type: 'open' }))
+          } else {
+            ws.send(
+              JSON.stringify({
+                id: Date.now(),
+                type: 'close',
+                data: new Error('This game is not yours'),
+              })
+            )
+          }
         })
+      }
 
-        client.send({ id: Date.now(), type: 'message', data: board })
+      /**
+       * @param {MessageEvent} message
+       */
+      ws.onmessage = (message) => {
+        const data = JSON.parse(message.data)
 
-        const winner = service.isFinished(board)
-        if (winner !== null) {
-          service.update(id, {
-            win: winner == user.id ? true : false,
+        service.getById(id).then((game) => {
+          game.board = data.board
+
+          service.update(id, game).then(() => {
+            sendToClients(message.data)
+
+            const winner = service.isFinished(game)
+            if (winner !== null) {
+              service.update(id, {
+                win: winner == user.id ? true : false,
+              })
+
+              sendToClients({
+                id: game.id,
+                type: 'close',
+                data: winner,
+              })
+            }
           })
-          client.send({ id: Date.now(), type: 'close', data: winner })
-        }
-      })
-      .catch((err) => {
-        client.send({ id: Date.now(), type: 'error', data: err.message })
-      })
+        })
+      }
+
+      ws.onerror = (error) => {
+        console.error(error)
+      }
+    })
   },
+}
+
+/**
+ * Sends a message to all clients.
+ *
+ * @param {*} data
+ */
+const sendToClients = (data) => {
+  wss.clients.forEach((client) => {
+    client.send(JSON.stringify(data))
+  })
 }

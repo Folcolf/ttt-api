@@ -4,14 +4,14 @@ const URL = '/events'
 
 const eventRoutes = [
   {
-    path: URL,
+    path: `${URL}/:id`,
     method: 'get',
-    handlers: [isConnected, events.hello],
+    handlers: [isConnected, events.joined],
   },
   {
-    path: `${URL}/:id`,
-    method: 'put',
-    handlers: [isConnected, events.joined],
+    path: `${URL}/:id/position`,
+    method: 'get',
+    handlers: [isConnected, events.position],
   },
 ]
 
