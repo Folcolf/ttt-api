@@ -12,7 +12,7 @@ const eventRoutes = [
     path: `${URL}/:id`,
     method: 'put',
     handlers: [isConnected, events.joined],
-  }
+  },
 ]
 
 export { eventRoutes }
