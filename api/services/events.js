@@ -1,5 +1,10 @@
 import express from 'express'
 
+/**
+ * Server side events client
+ *
+ * @class SSEClient
+ */
 export class SSEClient {
   /**
    * @param {express.Response} res - La réponse HTTP
@@ -28,6 +33,17 @@ export class SSEClient {
   }
 
   /**
+   *
+   *
+   * @param {string} event
+   * @param {Func} callback
+   * @memberof SSEClient
+   */
+  on(event, callback) {
+    this.res.on(event, callback)
+  }
+
+  /**
    * Envoie un message au client
    * @function send
    * @params {Object} message - Le message à envoyer au client
@@ -52,5 +68,14 @@ export class SSEClient {
     this.res.write(
       `data: ${typeof data === 'object' ? JSON.stringify(data) : data}\n\n`
     )
+  }
+
+  /**
+   * Ferme la connexion avec le client
+   *
+   * @memberof SSEClient
+   */
+  close() {
+    this.res.end()
   }
 }
