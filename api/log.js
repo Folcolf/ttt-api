@@ -29,7 +29,11 @@ const log = createLogger({
       level,
       format: combine(colorize(), splat(), timestamp(), myFormat(false)),
     }),
-    new transports.File({ filename: `logs/server.${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}.log` }),
+    new transports.File({
+      filename: `logs/server.${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDate()}.log`,
+    }),
   ],
 })
 
