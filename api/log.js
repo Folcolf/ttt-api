@@ -1,7 +1,7 @@
 import winston from 'winston'
 
 const { createLogger, format, transports } = winston
-const { combine, splat, timestamp, printf, colorize } = winston.format
+const { combine, splat, printf, colorize } = winston.format
 
 const args = process.argv.slice(2)
 
@@ -18,19 +18,19 @@ const myFormat = (uppercase) =>
     return msg
   })
 
-const level = args[0] || 'info'
+const appLevel = args[0] || 'info'
 const date = new Date()
 
 const log = createLogger({
-  level,
+  level: appLevel,
   transports: [
     new transports.Console({
-      level,
-      format: combine(colorize(), splat(), timestamp(), myFormat(false)),
+      level: appLevel,
+      format: combine(colorize(), splat(), format.timestamp(), myFormat(false)),
     }),
     new transports.File({
       format: combine(
-        timestamp({
+        format.timestamp({
           format: 'YYYY-MM-DD HH:mm:ss',
         }),
         printf(

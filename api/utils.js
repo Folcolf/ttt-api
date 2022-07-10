@@ -9,32 +9,48 @@ import log from './log.js'
  */
 const handleResponse = (res, data, status = 200) => {
   const { req } = res
+
+  let total
+
+  if (status === 200) {
+    if (Array.isArray(data)) {
+      total = data.length
+    } else if (data) {
+      total = 1
+    } else {
+      total = undefined
+    }
+  } else {
+    total = 0
+  }
+
   const _metadata = {
     page: req.query.page ?? undefined,
     limit: req.query.limit ?? undefined,
-    total:
-      status !== 200
-        ? 0
-        : Array.isArray(data)
-        ? data.length
-        : data
-        ? 1
-        : undefined,
+    total,
     links: [{ self: req.originalUrl }],
   }
 
   if (status !== 200) {
-    const error = JSON.parse(
-      JSON.stringify(data, Object.getOwnPropertyNames(data))
-    )
+    if (data) {
+      const error = JSON.parse(
+        JSON.stringify(data, Object.getOwnPropertyNames(data))
+      )
 
-    log.debug(error)
+      log.debug(error)
 
-    res.status(400).json({
-      _metadata,
-      error,
-      timestamp: new Date().toISOString(),
-    })
+      res.status(400).json({
+        _metadata,
+        error,
+        timestamp: new Date().toISOString(),
+      })
+    } else {
+      res.status(status).json({
+        _metadata,
+        data,
+        timestamp: new Date().toISOString(),
+      })
+    }
   } else if (data) {
     res.status(status).json({
       _metadata,
@@ -44,7 +60,7 @@ const handleResponse = (res, data, status = 200) => {
   } else {
     res.status(404).json({
       _metadata,
-      data: {},
+      data: null,
       timestamp: new Date().toISOString(),
     })
   }
@@ -57,13 +73,12 @@ const handleResponse = (res, data, status = 200) => {
  * @returns {client.User | undefined}
  */
 const getUserSession = (req) => {
-  const userSession = req.session.user
-  return userSession
+  return req.session.user
 }
 
 /**
  * Check if the user is authenticated
- *
+ *getUserSession
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
@@ -74,7 +89,6 @@ const isConnected = (req, res, next) => {
     next()
   } else {
     res.status(401).json({})
-    return
   }
 }
 
@@ -92,7 +106,6 @@ const isAdmin = (req, res, next) => {
     next()
   } else {
     res.status(httpStatus.UNAUTHORIZED).json({})
-    return
   }
 }
 
@@ -110,7 +123,6 @@ const isOwner = (req, res, next) => {
     next()
   } else {
     res.status(401).json({})
-    return
   }
 }
 

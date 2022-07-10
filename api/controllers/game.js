@@ -21,6 +21,20 @@ export default {
    * @param {express.Request} req
    * @param {express.Response} res
    */
+  findByUser: async (req, res) => {
+    const userId = req.params.userId
+    const pagination = req.query
+
+    service
+      .findByUser(userId, pagination)
+      .then((data) => handleResponse(res, data))
+      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+  },
+
+  /**ame has ended
+   * @param {express.Request} req
+   * @param {express.Response} res
+   */
   getById: async (req, res) => {
     service
       .getById(req.params.id)
@@ -32,7 +46,7 @@ export default {
    * @param {express.Request} req
    * @param {express.Response} res
    */
-  count: async (req, res) => {
+  count: async (_req, res) => {
     service
       .count()
       .then((data) => handleResponse(res, data))

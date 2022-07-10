@@ -11,7 +11,7 @@ import prisma from '../db.js'
 const find = async ({ page, limit }) => {
   const skip = (page - 1) * limit
 
-  const users = await prisma.user.findMany({
+  return prisma.user.findMany({
     include: {
       Credential: {
         select: {
@@ -24,8 +24,6 @@ const find = async ({ page, limit }) => {
     skip,
     take: limit,
   })
-
-  return users
 }
 
 /**
@@ -35,7 +33,7 @@ const find = async ({ page, limit }) => {
  * @returns {Promise<client.User>}
  */
 const getById = async (id) => {
-  const user = await prisma.user.findUniqueOrThrow({
+  return prisma.user.findUniqueOrThrow({
     where: {
       id,
     },
@@ -49,8 +47,6 @@ const getById = async (id) => {
       },
     },
   })
-
-  return user
 }
 
 /**

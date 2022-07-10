@@ -49,13 +49,7 @@ export default {
     if (req.session.user) {
       handleResponse(res, req.session.user)
     } else {
-      handleResponse(
-        res,
-        {
-          message: 'User is not logged in',
-        },
-        httpStatus.UNAUTHORIZED
-      )
+      handleResponse(res, null, httpStatus.UNAUTHORIZED)
     }
   },
 }
