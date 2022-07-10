@@ -1,7 +1,7 @@
 import winston from 'winston'
 
 const { createLogger, format, transports } = winston
-const { combine, splat, timestamp, printf, colorize } = winston.format
+const { combine, splat, printf, colorize } = winston.format
 
 const args = process.argv.slice(2)
 
@@ -18,18 +18,30 @@ const myFormat = (uppercase) =>
     return msg
   })
 
-const level = args[0] || 'info'
+const appLevel = args[0] || 'info'
 const date = new Date()
 
 const log = createLogger({
-  level,
-  format: combine(splat(), timestamp(), myFormat(true)),
+  level: appLevel,
   transports: [
     new transports.Console({
-      level,
-      format: combine(colorize(), splat(), timestamp(), myFormat(false)),
+      level: appLevel,
+      format: combine(colorize(), splat(), format.timestamp(), myFormat(false)),
     }),
     new transports.File({
+      format: combine(
+        format.timestamp({
+          format: 'YYYY-MM-DD HH:mm:ss',
+        }),
+        printf(
+          (info) =>
+            JSON.stringify({
+              time: info.timestamp,
+              level: info.level,
+              message: info.message,
+            }) + ','
+        )
+      ),
       filename: `logs/server.${date.getFullYear()}-${
         date.getMonth() + 1
       }-${date.getDate()}.log`,

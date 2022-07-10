@@ -10,15 +10,34 @@ import prisma from '../db.js'
 const find = async ({ page, limit, id }) => {
   const skip = (page - 1) * limit
 
-  const games = await prisma.game.findMany({
+  return prisma.game.findMany({
     skip,
     take: limit,
     where: {
       userId: id,
     },
   })
+}
 
-  return games
+/**
+ * Find all games played by a user
+ *
+ * @param {string} id
+ * @return {Promise<client.Game[]>}}
+ */
+const findByUser = async (id, { page, limit }) => {
+  const skip = (page - 1) * limit
+
+  return prisma.game.findMany({
+    skip,
+    take: limit,
+    where: {
+      userId: id,
+      OR: {
+        opponentId: id,
+      },
+    },
+  })
 }
 
 /**
@@ -28,20 +47,18 @@ const find = async ({ page, limit, id }) => {
  * @returns {Promise<client.Game>}
  */
 const getById = async (id) => {
-  const game = await prisma.game.findUniqueOrThrow({
+  return prisma.game.findUniqueOrThrow({
     where: {
       id,
     },
   })
-
-  return game
 }
 
 /**
  * Count the number of games for a user or all users
  *
- * @param {*} id
- * @return {*}
+ * @param {string} id
+ * @return {number}
  */
 const count = async (id) => {
   let search = {}
@@ -54,9 +71,7 @@ const count = async (id) => {
     }
   }
 
-  const game = await prisma.game.count(search)
-
-  return game
+  return prisma.game.count(search)
 }
 
 /**
@@ -65,19 +80,16 @@ const count = async (id) => {
  * @param {client.Game} game
  * @returns {Promise<client.Game>}
  */
-const create = async ({ userId, opponentId }) => {
-  const game = await prisma.game.create({
+const create = async ({ userId }) => {
+  return prisma.game.create({
     data: {
-      User: {
+      user: {
         connect: {
           id: userId,
         },
       },
-      opponentId,
     },
   })
-
-  return game
 }
 
 /**
@@ -122,11 +134,45 @@ const remove = async (id) => {
   return game
 }
 
+/**
+ * Check if a game is finished
+ *
+ * @param {client.Game} game
+ * @return {string}
+ */
+const isFinished = ({ board }) => {
+  const win = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ]
+
+  win.forEach((line) => {
+    const [a, b, c] = line
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      return board[a]
+    }
+  })
+
+  if (!board.includes(null)) {
+    return 'draw'
+  }
+
+  return null
+}
+
 export default {
   find,
+  findByUser,
   getById,
   count,
   create,
   update,
   remove,
+  isFinished,
 }

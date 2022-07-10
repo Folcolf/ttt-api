@@ -53,7 +53,7 @@ const accessLogStream = fs.createWriteStream(
 
 app.use(
   morgan(
-    ':date[iso] :method :url :status :res[content-length] - :response-time ms :data',
+    ':date[iso] :method :url :status :res[content-length] - :response-time ms',
     {
       stream: accessLogStream,
     }

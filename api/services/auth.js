@@ -42,8 +42,7 @@ export default {
         error: 0,
       },
     })
-
-    const user = await prisma.user.findUniqueOrThrow({
+    return prisma.user.findUniqueOrThrow({
       where: {
         id: credential.userId,
       },
@@ -56,8 +55,6 @@ export default {
         },
       },
     })
-
-    return user
   },
 
   /**
@@ -84,7 +81,7 @@ export default {
       hashLength: 32,
     })
 
-    const user = await prisma.user.create({
+    return prisma.user.create({
       data: {
         name,
         credential: {
@@ -96,6 +93,5 @@ export default {
         role: client.Role.USER,
       },
     })
-    return user
   },
 }

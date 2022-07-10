@@ -47,6 +47,7 @@ model Game {
   userId     String   @db.ObjectId
   opponentId String?  @db.ObjectId
   win        Boolean?
+  board      String[]    
 
   createdAt  DateTime @default(now())
   finishedAt DateTime @updatedAt
