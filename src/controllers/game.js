@@ -13,8 +13,8 @@ export default {
 
     service
       .find(pagination)
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -27,8 +27,8 @@ export default {
 
     service
       .findByUser(userId, pagination)
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**ame has ended
@@ -38,8 +38,8 @@ export default {
   getById: async (req, res) => {
     service
       .getById(req.params.id)
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -49,8 +49,8 @@ export default {
   count: async (_req, res) => {
     service
       .count()
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(_ => handleResponse(res, 0))
   },
 
   /**
@@ -60,8 +60,8 @@ export default {
   countById: async (req, res) => {
     service
       .count(req.params.id)
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -71,8 +71,8 @@ export default {
   create: async (req, res) => {
     service
       .create(req.body)
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -82,8 +82,8 @@ export default {
   update: async (req, res) => {
     service
       .update(req.params.id, req.body)
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -93,7 +93,7 @@ export default {
   remove: async (req, res) => {
     service
       .remove(req.params.id)
-      .then((data) => handleResponse(res, data))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(data => handleResponse(res, data))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 }

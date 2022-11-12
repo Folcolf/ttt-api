@@ -9,17 +9,17 @@ let instance = null
  * @param {http.Server} server
  * @return {WebSocketServer}
  */
-const createWSS = (server) => {
+const createWSS = server => {
   instance = new WebSocketServer({
     noServer: true,
     path: '/websockets',
   })
 
-  server.on('upgrade', (request, socket, head) => {
-    instance.handleUpgrade(request, socket, head, (websocket) => {
+  server.on('upgrade', (request, socket, head) =>
+    instance.handleUpgrade(request, socket, head, websocket =>
       instance.emit('connection', websocket, request)
-    })
-  })
+    )
+  )
 }
 
 /**

@@ -46,7 +46,7 @@ const findByUser = async (id, { page, limit }) => {
  * @param {string} id
  * @returns {Promise<client.Game>}
  */
-const getById = async (id) => {
+const getById = async id => {
   return prisma.game.findUniqueOrThrow({
     where: {
       id,
@@ -60,7 +60,7 @@ const getById = async (id) => {
  * @param {string} id
  * @return {number}
  */
-const count = async (id) => {
+const count = async id => {
   let search = {}
 
   if (id !== undefined) {
@@ -120,7 +120,7 @@ const update = async (id, data) => {
  * @param {string} id
  * @returns {Promise<client.Game>}
  */
-const remove = async (id) => {
+const remove = async id => {
   const game = await prisma.game.delete({
     where: {
       id,
@@ -152,7 +152,7 @@ const isFinished = ({ board }) => {
     [2, 4, 6],
   ]
 
-  win.forEach((line) => {
+  win.forEach(line => {
     const [a, b, c] = line
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
       return board[a]

@@ -8,7 +8,7 @@ export default {
    *
    * @param {string} email
    * @param {string} password
-   * @returns {Promise<client.User>}
+   * @returns {Promise<User>}
    */
   login: async (email, password) => {
     const credential = await prisma.credential.findUniqueOrThrow({

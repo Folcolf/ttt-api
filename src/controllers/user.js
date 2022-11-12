@@ -12,8 +12,8 @@ export default {
     const pagination = req.query
     service
       .find(pagination)
-      .then((users) => handleResponse(res, users))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(users => handleResponse(res, users))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -23,8 +23,8 @@ export default {
   getById: async (req, res) => {
     service
       .getById(req.params.id)
-      .then((user) => handleResponse(res, user))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(user => handleResponse(res, user))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -37,8 +37,8 @@ export default {
 
     service
       .update(id, body)
-      .then((user) => handleResponse(res, user))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(user => handleResponse(res, user))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -51,8 +51,8 @@ export default {
 
     service
       .updatePassword(id, body)
-      .then((user) => handleResponse(res, user))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(user => handleResponse(res, user))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
   /**
@@ -64,7 +64,7 @@ export default {
 
     service
       .remove(id)
-      .then((user) => handleResponse(res, user))
-      .catch((err) => handleResponse(res, err, httpStatus.BAD_REQUEST))
+      .then(user => handleResponse(res, user))
+      .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 }

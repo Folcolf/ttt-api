@@ -14,11 +14,6 @@ const authRoutes = [
     handlers: [auth.register],
   },
   {
-    path: `${URL}/logout`,
-    method: 'post',
-    handlers: [auth.logout],
-  },
-  {
     path: `${URL}/logged`,
     method: 'get',
     handlers: [auth.isLogged],

@@ -8,7 +8,7 @@ import { userRoutes } from './user.js'
 
 const router = Router()
 
-const registerRoutes = (routes) => {
+const registerRoutes = routes => {
   routes.forEach(({ path, method, handlers }) => {
     log.debug(`Registering route: ${method.toUpperCase()} ${path}`)
     router[method](path, ...handlers)

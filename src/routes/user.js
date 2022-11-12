@@ -1,5 +1,5 @@
 import user from '../controllers/user.js'
-import { isAdmin, isConnected, isOwner } from '../utils.js'
+import { isAdmin, isConnected, isOwner } from '../middleware.js'
 
 const URL = '/users'
 

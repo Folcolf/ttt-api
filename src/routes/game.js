@@ -1,5 +1,5 @@
 import game from '../controllers/game.js'
-import { isAdmin, isConnected, isOwner } from '../utils.js'
+import { isAdmin, isConnected, isOwner } from '../middleware.js'
 
 const URL = '/games'
 

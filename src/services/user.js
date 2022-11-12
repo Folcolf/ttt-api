@@ -32,7 +32,7 @@ const find = async ({ page, limit }) => {
  * @param {string} id
  * @returns {Promise<client.User>}
  */
-const getById = async (id) => {
+const getById = async id => {
   return prisma.user.findUniqueOrThrow({
     where: {
       id,
@@ -104,7 +104,7 @@ const updatePassword = async (id, password) => {
  * @param {string} id
  * @returns {Promise<boolean>}
  */
-const remove = async (id) => {
+const remove = async id => {
   const userExist = await getById(id)
 
   const credential = await prisma.credential.delete({

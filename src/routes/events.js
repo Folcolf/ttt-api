@@ -1,12 +1,13 @@
 import events from '../controllers/events.js'
-import { isConnected } from '../utils.js'
+import { isConnected } from '../middleware.js'
+
 const URL = '/events'
 
 const eventRoutes = [
   {
     path: `${URL}/:id`,
     method: 'get',
-    handlers: [isConnected, events.joined],
+    handlers: [events.joined],
   },
   {
     path: `${URL}/:id/position`,

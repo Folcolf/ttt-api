@@ -6,28 +6,29 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js debug"
+    "dev": "nodemon index.js debug",
+    "fmt": "prettier --write ."
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@prisma/client": "^4.0.0",
-    "argon2": "^0.28.5",
+    "@prisma/client": "^4.5.0",
+    "argon2": "^0.30.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "express-session": "^1.17.3",
+    "express": "^4.18.2",
     "fs": "^0.0.1-security",
-    "helmet": "^5.1.0",
+    "helmet": "^6.0.0",
     "http": "^0.0.1-security",
-    "http-status": "^1.5.2",
+    "http-status": "^1.5.3",
+    "jose": "^4.10.4",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
-    "uuid": "^8.3.2",
-    "winston": "^3.8.1",
-    "ws": "^8.8.0"
+    "uuid": "^9.0.0",
+    "winston": "^3.8.2",
+    "ws": "^8.10.0"
   },
   "devDependencies": {
-    "prisma": "^4.0.0"
+    "prisma": "^4.5.0"
   }
 }
