@@ -1,13 +1,14 @@
-import client from '@prisma/client'
-import prisma from '../db.js'
+import { Game } from '@prisma/client'
+import prisma from '../db'
+import type { Pagination } from './../types/pagination'
 
 /**
  * Get games with pagination
- *
- * @param {Object} pagination
- * @returns {Promise<client.Game[]>}
  */
-const find = async ({ page, limit, id }) => {
+const find = async (
+  id: string,
+  { page, limit }: Pagination
+): Promise<Game[]> => {
   const skip = (page - 1) * limit
 
   return prisma.game.findMany({
@@ -21,11 +22,8 @@ const find = async ({ page, limit, id }) => {
 
 /**
  * Find all games played by a user
- *
- * @param {string} id
- * @return {Promise<client.Game[]>}}
  */
-const findByUser = async (id, { page, limit }) => {
+const findByUser = async (id: string, { page, limit }: Pagination) => {
   const skip = (page - 1) * limit
 
   return prisma.game.findMany({
@@ -42,11 +40,8 @@ const findByUser = async (id, { page, limit }) => {
 
 /**
  * Find a game by id
- *
- * @param {string} id
- * @returns {Promise<client.Game>}
  */
-const getById = async id => {
+const getById = async (id: string): Promise<Game> => {
   return prisma.game.findUniqueOrThrow({
     where: {
       id,
@@ -56,11 +51,8 @@ const getById = async id => {
 
 /**
  * Count the number of games for a user or all users
- *
- * @param {string} id
- * @return {number}
  */
-const count = async id => {
+const count = async (id?: string): Promise<number> => {
   let search = {}
 
   if (id !== undefined) {
@@ -76,11 +68,11 @@ const count = async id => {
 
 /**
  * Create a game between two users
- *
- * @param {client.Game} game
- * @returns {Promise<client.Game>}
  */
-const create = async ({ userId }) => {
+const create = async ({ userId }: Game): Promise<Game> => {
+  if (!userId) {
+    throw new Error('User ID is required')
+  }
   return prisma.game.create({
     data: {
       user: {
@@ -93,34 +85,21 @@ const create = async ({ userId }) => {
 }
 
 /**
- * Update a game by id
- *
- * @param {string} id
- * @param {client.Game} data
- * @returns {Promise<client.Game>}
+ * Update a game
  */
-const update = async (id, data) => {
-  const game = await prisma.game.update({
+const update = async (id: string, data: Partial<Game>): Promise<Game> => {
+  return prisma.game.update({
     where: {
       id,
     },
     data,
   })
-
-  if (!game) {
-    throw new Error('Game not found')
-  }
-
-  return game
 }
 
 /**
  * Remove a game by id
- *
- * @param {string} id
- * @returns {Promise<client.Game>}
  */
-const remove = async id => {
+const remove = async (id: string): Promise<Game> => {
   const game = await prisma.game.delete({
     where: {
       id,
@@ -136,11 +115,8 @@ const remove = async id => {
 
 /**
  * Check if a game is finished
- *
- * @param {client.Game} game
- * @return {string}
  */
-const isFinished = ({ board }) => {
+const isFinished = ({ board }: Game): string | null => {
   const win = [
     [0, 1, 2],
     [3, 4, 5],
@@ -154,12 +130,16 @@ const isFinished = ({ board }) => {
 
   win.forEach(line => {
     const [a, b, c] = line
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a]
+    if (
+      board[a].value &&
+      board[a].value === board[b].value &&
+      board[a].value === board[c].value
+    ) {
+      return board[a].value
     }
   })
 
-  if (!board.includes(null)) {
+  if (!board.map(cell => cell.value).includes(null)) {
     return 'draw'
   }
 

@@ -24,7 +24,7 @@ if (appLevel === 'debug') {
   }
 }
 
-const myFormat = uppercase =>
+const myFormat = (uppercase: boolean) =>
   printf(({ level, message, timestamp, ...metadata }) => {
     if (uppercase) {
       level = level.toUpperCase()

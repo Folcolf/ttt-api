@@ -1,37 +1,29 @@
-import express from 'express'
+import { Request, Response } from 'express'
 import httpStatus from 'http-status'
-import service from '../services/user.js'
-import { handleResponse } from '../utils.js'
+import { handleResponse } from '../middleware'
+import service from '../services/user'
+import type { Pagination } from '../types/pagination'
 
 export default {
-  /**
-   * @param {express.Request} req
-   * @param {express.Response} res
-   */
-  find: async (req, res) => {
-    const pagination = req.query
+  find: async (req: Request, res: Response) => {
+    const pagination: Pagination = {
+      page: Number(req.query.page) || 1,
+      limit: Number(req.query.limit) || 10,
+    }
     service
       .find(pagination)
       .then(users => handleResponse(res, users))
       .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
-  /**
-   * @param {express.Request} req
-   * @param {express.Response} res
-   */
-  getById: async (req, res) => {
+  getById: async (req: Request, res: Response) => {
     service
       .getById(req.params.id)
       .then(user => handleResponse(res, user))
       .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
-  /**
-   * @param {express.Request} req
-   * @param {express.Response} res
-   */
-  update: async (req, res) => {
+  update: async (req: Request, res: Response) => {
     const { id } = req.params
     const body = req.body
 
@@ -41,11 +33,7 @@ export default {
       .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
-  /**
-   * @param {express.Request} req
-   * @param {express.Response} res
-   */
-  updatePassword: async (req, res) => {
+  updatePassword: async (req: Request, res: Response) => {
     const { id } = req.params
     const body = req.body
 
@@ -55,11 +43,7 @@ export default {
       .catch(err => handleResponse(res, err, httpStatus.BAD_REQUEST))
   },
 
-  /**
-   * @param {express.Request} req
-   * @param {express.Response} res
-   */
-  remove: async (req, res) => {
+  remove: async (req: Request, res: Response) => {
     const { id } = req.params
 
     service

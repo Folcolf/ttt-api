@@ -1,16 +1,18 @@
-import client from '@prisma/client'
+import client, { User } from '@prisma/client'
 import { hash, verify } from 'argon2'
-import prisma from '../db.js'
+import prisma from '../db'
+
+import type { Register } from '../types/register'
+import type { Login } from '../types/login'
 
 export default {
   /**
    * Check if the user is present in the database and if the password is correct
    *
-   * @param {string} email
-   * @param {string} password
-   * @returns {Promise<User>}
+   * @param {Login} login
+   * @returns {*} Promise<User>
    */
-  login: async (email, password) => {
+  login: async ({ email, password }: Login): Promise<User> => {
     const credential = await prisma.credential.findUniqueOrThrow({
       where: {
         email,
@@ -60,10 +62,10 @@ export default {
   /**
    * Create a new user in the database and return the user if isn't already present
    *
-   * @param {Object} user
-   * @returns {Promise<User>}
+   * @param {Register} user
+   * @returns {*} Promise<User>
    */
-  register: async ({ email, name, password }) => {
+  register: async ({ email, name, password }: Register): Promise<User> => {
     const alreadyExists = await prisma.user.findFirst({
       where: {
         credential: {

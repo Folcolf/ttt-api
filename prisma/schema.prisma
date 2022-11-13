@@ -47,10 +47,14 @@ model Game {
   userId     String   @db.ObjectId
   opponentId String?  @db.ObjectId
   win        Boolean?
-  board      String[]    
+  board      Cell[]
 
   createdAt  DateTime @default(now())
   finishedAt DateTime @updatedAt
 
   user User? @relation(fields: [userId], references: [id])
+}
+
+type Cell {
+  value String?
 }

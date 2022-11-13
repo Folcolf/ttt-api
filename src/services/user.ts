@@ -1,19 +1,18 @@
-import client from '@prisma/client'
+import { User } from '@prisma/client'
 import { hash } from 'argon2'
-import prisma from '../db.js'
+import prisma from '../db'
+import type { Pagination } from '../types/pagination'
+import { UserCredential } from '../types/user'
 
 /**
  * Get users with pagination
- *
- * @param {Object} pagination
- * @returns {Promise<client.User[]>}
  */
-const find = async ({ page, limit }) => {
+const find = async ({ page, limit }: Pagination): Promise<User[]> => {
   const skip = (page - 1) * limit
 
   return prisma.user.findMany({
     include: {
-      Credential: {
+      credential: {
         select: {
           id: true,
           email: true,
@@ -28,17 +27,14 @@ const find = async ({ page, limit }) => {
 
 /**
  * Find a user by id
- *
- * @param {string} id
- * @returns {Promise<client.User>}
  */
-const getById = async id => {
+const getById = async (id: string): Promise<UserCredential> => {
   return prisma.user.findUniqueOrThrow({
     where: {
       id,
     },
     include: {
-      Credential: {
+      credential: {
         select: {
           id: true,
           email: true,
@@ -51,12 +47,8 @@ const getById = async id => {
 
 /**
  * Update a user by id
- *
- * @param {string} id
- * @param {Object} data
- * @returns {Promise<client.User>}
  */
-const update = async (id, data) => {
+const update = async (id: string, data: User): Promise<User> => {
   const user = await prisma.user.update({
     where: {
       id,
@@ -73,21 +65,21 @@ const update = async (id, data) => {
 
 /**
  * Update password of a user by id
- *
- * @param {string} id
- * @param {string} password
- * @returns {Promise<client.User>}
  */
-const updatePassword = async (id, password) => {
+const updatePassword = async (id: string, password: string): Promise<User> => {
   const user = await prisma.user.update({
     where: {
       id,
     },
     data: {
-      password: await hash(password, {
-        type: 2,
-        hashLength: 32,
-      }),
+      credential: {
+        update: {
+          hash: await hash(password, {
+            type: 2,
+            hashLength: 32,
+          }),
+        },
+      },
     },
   })
 
@@ -100,21 +92,16 @@ const updatePassword = async (id, password) => {
 
 /**
  * Delete a user by id
- *
- * @param {string} id
- * @returns {Promise<boolean>}
  */
-const remove = async id => {
+const remove = async (id: string): Promise<boolean> => {
   const userExist = await getById(id)
 
-  const credential = await prisma.credential.delete({
-    where: {
-      id: userExist.Credential.id,
-    },
-  })
-
-  if (!credential) {
-    throw new Error('Credential not found')
+  if (userExist.credential) {
+    await prisma.credential.delete({
+      where: {
+        id: userExist.credential.id,
+      },
+    })
   }
 
   const user = await prisma.user.delete({
